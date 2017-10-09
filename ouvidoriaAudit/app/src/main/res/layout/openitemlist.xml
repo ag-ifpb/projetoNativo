@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/list_item_string"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="8dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_weight=".65"/>
+
+    <!--android:paddingRight="5dp"-->
+    <Button
+        android:id="@+id/btnResponse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+
+        android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
+        android:text="Responder"
+        android:layout_weight=".35"/>
+
+
+
+</LinearLayout>
