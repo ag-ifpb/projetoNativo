@@ -24,16 +24,27 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
 import br.edu.ifpb.pdm.ouvidoriacliente.services.pubnub.PubNubClientService;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    private final OkHttpClient httpClient = new OkHttpClient();
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -65,19 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
-        // populateAutoComplete();
-
-//        mPasswordView = (EditText) findViewById(R.id.password);
-//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -90,49 +88,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
-
-//    private void populateAutoComplete() {
-//        if (!mayRequestContacts()) {
-//            return;
-//        }
-//
-//        getLoaderManager().initLoader(0, null, this);
-//    }
-
-//    private boolean mayRequestContacts() {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-//            return true;
-//        }
-//        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-//            return true;
-//        }
-//        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-//            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-//                    .setAction(android.R.string.ok, new View.OnClickListener() {
-//                        @Override
-//                        @TargetApi(Build.VERSION_CODES.M)
-//                        public void onClick(View v) {
-//                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-//                        }
-//                    });
-//        } else {
-//            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-//        }
-//        return false;
-//    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        if (requestCode == REQUEST_READ_CONTACTS) {
-//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                populateAutoComplete();
-//            }
-//        }
-//    }
 
 
     /**
@@ -147,21 +102,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Reset errors.
         mEmailView.setError(null);
-//        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
-//        String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-//        // Check for a valid password, if the user entered one.
-//        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-//            mPasswordView.setError(getString(R.string.error_invalid_password));
-//            focusView = mPasswordView;
-//            cancel = true;
-//        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -290,11 +237,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
+     *
+     * AsyncTask usada para consultar se o email é de um usuário válido.
+     * Caso o email seja válido, o id do usuário é salvo nas SharedPreferences para consultas posteriores.
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
+        private Request request;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -312,28 +263,46 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-                if (pieces[0].equals(mEmail)) {
+            Response response = null;
+            try {
+                // cria a requisição
+                HttpUrl.Builder urlBuilder =
+                        HttpUrl.parse("http://10.0.3.2:8080/ouvidoriaws/api/usuario/byemail/" + mEmail).newBuilder();
 
+                // realizando requisição
+                request = new Request.Builder()
+                        .url(urlBuilder.build().toString())
+                        .build();
+
+                response = httpClient.newCall(request).execute();
+
+                // se a resposta resultar em sucesso
+                if (response.isSuccessful()) {
+
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    // pegar a informações do usuário e guardar em SharedPreferences
                     SharedPreferences sharedPreferences = getSharedPreferences("OUVIDORIACLIENTE", MODE_PRIVATE);
                     sharedPreferences.edit().clear().commit();
-                    sharedPreferences.edit().putString("email" , pieces[0]).commit();
-                    sharedPreferences.edit().putString("idusuario" , pieces[1]).commit();
+                    sharedPreferences.edit().putString("email" , jsonObject.getString("email")).commit();
+                    sharedPreferences.edit().putString("idusuario" , String.valueOf(jsonObject.getInt("id"))).commit();;
 
+                    // chamar serviço do Pubnub para inscrever usuário no canal do Pubnub
                     startService(new Intent(getApplicationContext(), PubNubClientService.class));
 
                     return true;
+
+                } else {
+                    return false;
                 }
+
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
 
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
+
+
 
         @Override
         protected void onPostExecute(final Boolean success) {
@@ -344,8 +313,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 finish();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             } else {
-//                mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                mPasswordView.requestFocus();
+                mEmailView.setError("Falha no login. Informe um email válido");
             }
         }
 

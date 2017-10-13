@@ -82,8 +82,8 @@ public class UsuarioService {
         return usuarioDao.getById(id);
     }
     
-    public Usuario getByEmail(String email) {
-        return usuarioDao.getByEmail(email);
+    public Usuario getClientByEmail(String email) {
+        return usuarioDao.getClientByEmail(email);
     }
     
     public List<Usuario> getAll() {

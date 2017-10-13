@@ -22,8 +22,8 @@ import javax.persistence.TypedQuery;
 @DataSourceDefinition(
         name = "java:app/ouvidoria-data-source",
         className = "org.postgresql.Driver",
-//        url = "jdbc:postgresql://banco-ouvidoria:5432/ouvidoria",        
-        url = "jdbc:postgresql://localhost:5432/ouvidoria",
+        url = "jdbc:postgresql://banco-ouvidoria:5432/ouvidoria",        
+//        url = "jdbc:postgresql://localhost:5432/ouvidoria",
         user = "postgres",
         password = "12345"
 )
@@ -78,11 +78,12 @@ public class UsuarioDao {
         return em.find(Usuario.class, id);
     }
     
-    public Usuario getByEmail(String email) {
+    public Usuario getClientByEmail(String email) {
         TypedQuery<Usuario> query = em
                 .createQuery("SELECT u"
                         + " FROM Usuario u"
                         + " WHERE u.email = :email "
+                        + " AND u.tipoUsuario = 1 "
                         + " ORDER BY u.id"
                         , Usuario.class)
                 .setParameter("email", email);

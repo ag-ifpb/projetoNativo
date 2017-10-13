@@ -24,8 +24,8 @@ import javax.persistence.TypedQuery;
 @DataSourceDefinition(
         name = "java:app/ouvidoria-data-source",
         className = "org.postgresql.Driver",
-//        url = "jdbc:postgresql://banco-ouvidoria:5432/ouvidoria",        
-        url = "jdbc:postgresql://localhost:5432/ouvidoria",
+        url = "jdbc:postgresql://banco-ouvidoria:5432/ouvidoria",        
+//        url = "jdbc:postgresql://localhost:5432/ouvidoria",
         user = "postgres",
         password = "12345"
 )

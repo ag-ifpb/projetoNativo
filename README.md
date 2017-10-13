@@ -20,7 +20,7 @@
 
 2. No terminal de linha de comando, execute `docker network create cliente_default_ntw`. Este comando é necessário para criarmos a rede docker que será usada para comunicação entre os containers da aplicação e do banco de dados.
 
-3. No seu terminal, navegue até a pasta raiz do projeto **ouvidoriaws**.
+3. No seu terminal, navegue até a pasta do projeto **ouvidoriaws**.
 
 4. Para iniciar os containers do projeto, execute `sh ./run.sh` (\*\*). A partir deste passo, a aplicação já deve estar disponível para uso, logo após os containers terem inicializado é claro :)
 
@@ -30,10 +30,10 @@
 
 <hr>
 
-#### Observações
+#### Observações gerais
 
 1. O iniciar as imagens no **Docker**, algumas informações já estarão presentes no banco de dados como alguns usuários e um ticket inativo.
 
 2. O container do **postgres** pode ser acessível através da porta `5434` e senha `12345`.
 
-3. 
+3.

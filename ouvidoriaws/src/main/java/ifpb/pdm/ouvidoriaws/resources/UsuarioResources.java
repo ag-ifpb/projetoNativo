@@ -71,7 +71,7 @@ public class UsuarioResources {
     @Path("/byemail/{email}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsuarioByEmail(@PathParam("email") String email) {
-        Usuario usuario = usuarioService.getByEmail(email);
+        Usuario usuario = usuarioService.getClientByEmail(email);
         if (usuario  == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
