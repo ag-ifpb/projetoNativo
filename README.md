@@ -36,4 +36,4 @@
 
 2. O container do **postgres** pode ser acessível através da porta `5434` e senha `12345`.
 
-3.
+3. O login no aplicativo do cliente é realizado através de email dos usuários do tipo cliente que já estejam cadastrados. Inicialmente pode usar os emails **natarajan@gmail.com** ou **nabila@gmail.com** (usuários inseridos quando Docker é iniciado).
