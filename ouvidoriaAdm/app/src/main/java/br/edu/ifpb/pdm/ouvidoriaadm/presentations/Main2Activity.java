@@ -29,6 +29,8 @@ public class Main2Activity extends AppCompatActivity {
     private UsuarioArrayAdapter usuarioArrayAdapter;
     private LocalBroadcastManager localBroadcastManager;
 
+    private BroadcastReceiver updateListBR;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +70,17 @@ public class Main2Activity extends AppCompatActivity {
 
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        updateListBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("natarajan-debug","atualizando lista de usuários");
+                Log.d("natarajan-debug", "atualizando lista de usuários");
                 List<Usuario> usuarios = (List<Usuario>) intent.getSerializableExtra("usuarios");
                 usuarioArrayAdapter.clear();
                 usuarioArrayAdapter.addAll(usuarios);
                 usuarioArrayAdapter.notifyDataSetChanged();
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.GETALLUSERS"));
+        };
 
 
     }
@@ -90,10 +92,18 @@ public class Main2Activity extends AppCompatActivity {
         Intent getUsersIntent = new Intent(this, UsuarioService.class);
         getUsersIntent.putExtra("command", "GETALL");
         startService(getUsersIntent);
+
+        localBroadcastManager.registerReceiver(updateListBR, new IntentFilter("br.edu.ifpb.ouvidoriaadm.GETALLUSERS"));
+
         Log.d("natarajan-debug", "consulta usuários");
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        localBroadcastManager.unregisterReceiver(updateListBR);
+    }
 
     public void abrirTelaCadastro() {
         Log.d("natarajan-debug","entrando na tela de cadastro");

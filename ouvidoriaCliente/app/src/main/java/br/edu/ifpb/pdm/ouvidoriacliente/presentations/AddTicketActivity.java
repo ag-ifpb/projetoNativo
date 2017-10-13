@@ -16,14 +16,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
-import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.TicketDto;
 import br.edu.ifpb.pdm.ouvidoriacliente.enums.TipoTicket;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.TicketService;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.offline.WatchService;
 
 public class AddTicketActivity extends AppCompatActivity {
 
@@ -64,10 +60,9 @@ public class AddTicketActivity extends AppCompatActivity {
                 newTicket.setResume(editTextResumo.getText().toString());
                 newTicket.setTipo(TipoTicket.parse(tipo).getId());
 
-                Intent intent = new Intent(getApplicationContext(), TicketService.class);
+                Intent intent = new Intent(getApplicationContext(), WatchService.class);
                 intent.putExtra("ticket", newTicket);
                 intent.putExtra("command", "CREATE");
-
                 startService(intent);
             }
         });
@@ -75,10 +70,14 @@ public class AddTicketActivity extends AppCompatActivity {
         createTicketsBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("natarajan-debug","criado o ticket");
+                Log.d("natarajan-debug","ticket criado");
                 limparCampos();
-                Toast.makeText(context, "Ticket criado com sucesso", Toast.LENGTH_SHORT).show();
-
+                final String localSaving = intent.getStringExtra("local");
+                if (localSaving.equals("offline")) {
+                    Toast.makeText(context, "Ticket salvo offline", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Ticket criado com sucesso", Toast.LENGTH_SHORT).show();
+                }
             }
         };
 

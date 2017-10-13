@@ -29,17 +29,30 @@
         <activity android:name=".presentations.MyTicketActivity" />
         <activity android:name=".presentations.ResponseActivity" />
 
+
         <service
-            android:name=".services.TicketService"
+            android:name=".services.offline.WatchService"
             android:exported="false" />
         <service
-            android:name=".services.MensagemService"
+            android:name=".services.rest.clients.TicketService"
             android:exported="false" />
         <service
-            android:name=".services.PubNubService"
+            android:name=".services.rest.clients.MensagemService"
+            android:exported="false" />
+        <service
+            android:name=".services.pubnub.PubNubClientService"
             android:exported="false" />
 
+
+
         <activity android:name=".presentations.AddTicketActivity"></activity>
+
+        <receiver android:name=".NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

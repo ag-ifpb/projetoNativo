@@ -24,6 +24,9 @@ public class MudarUsuario extends AppCompatActivity {
     private TextView textViewUsuario;
     private Button buttonChange;
 
+    private LocalBroadcastManager localBroadcastManager;
+    private BroadcastReceiver changeToAuditorBR, errorBR, changeToClient, clientError;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,20 +64,19 @@ public class MudarUsuario extends AppCompatActivity {
         });
 
 
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        changeToAuditorBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
                 Toast.makeText(getApplicationContext(), "Usuário agora é um auditor!", Toast.LENGTH_SHORT).show();
                 Log.d("natarajan-debug", "msg agora é auditor");
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOAUDITOROK"));
+        };
 
 
-
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        errorBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -83,10 +85,10 @@ public class MudarUsuario extends AppCompatActivity {
                 Log.d("natarajan-debug", "msg erro auditor");
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOAUDITORERRO"));
+        };
 
 
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        changeToClient = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -94,11 +96,11 @@ public class MudarUsuario extends AppCompatActivity {
                 Log.d("natarajan-debug", "msg agora é cliente");
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOCLIENTOK"));
+        };
 
 
 
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        clientError = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -107,9 +109,28 @@ public class MudarUsuario extends AppCompatActivity {
                 Log.d("natarajan-debug", "msg erro cliente");
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOCLIENTERRO"));
+        };
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        localBroadcastManager.registerReceiver(changeToAuditorBR, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOAUDITOROK"));
+        localBroadcastManager.registerReceiver(errorBR, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOAUDITORERRO"));
+        localBroadcastManager.registerReceiver(changeToClient, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOCLIENTOK"));
+        localBroadcastManager.registerReceiver(clientError, new IntentFilter("br.edu.ifpb.ouvidoriaadm.TOCLIENTERRO"));
 
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        localBroadcastManager.unregisterReceiver(changeToAuditorBR);
+        localBroadcastManager.unregisterReceiver(errorBR);
+        localBroadcastManager.unregisterReceiver(changeToClient);
+        localBroadcastManager.unregisterReceiver(clientError);
+    }
 }

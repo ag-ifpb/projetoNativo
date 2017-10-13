@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.ouvidoriacliente.services;
+package br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import java.util.List;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.TicketDto;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.retrofit.clients.TicketRestApiService;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -145,6 +146,7 @@ public class TicketService extends IntentService {
                     if (execute.code() == 201) {
 
                         Intent intentResponse = new Intent("br.edu.ifpb.ouvidoriacliente.CREATED");
+                        intentResponse.putExtra("local", "online");
                         manager.sendBroadcast(intentResponse);  // informa à activity
 
                     } else {

@@ -36,7 +36,6 @@
         <activity android:name=".presentation.OpenTicketActivity" />
         <activity android:name=".presentation.ResponseActivity"></activity>
 
-
     </application>
 
 </manifest>

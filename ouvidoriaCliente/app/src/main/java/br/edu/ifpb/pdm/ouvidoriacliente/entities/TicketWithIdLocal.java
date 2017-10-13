@@ -6,19 +6,22 @@ import java.io.Serializable;
  * Created by natarajan on 09/10/17.
  */
 
-public class TicketDto implements Serializable{
+public class TicketWithIdLocal implements Serializable{
 
+    private Long id;
     private int tipo;
     private Long from;
     private String resume;
 
-    public TicketDto() {
+    public TicketWithIdLocal() {
     }
 
-    public TicketDto(TicketWithIdLocal local) {
-        this.tipo = local.getTipo();
-        this.from = local.getFrom();
-        this.resume = local.getResume();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getTipo() {

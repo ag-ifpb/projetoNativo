@@ -17,7 +17,7 @@ import java.util.List;
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
 import br.edu.ifpb.pdm.ouvidoriacliente.presentations.adapters.OpenTicketArrayAdapter;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.TicketService;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients.TicketService;
 
 public class MyTicketActivity extends AppCompatActivity {
 

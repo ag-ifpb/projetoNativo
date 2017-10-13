@@ -1,0 +1,32 @@
+version: '2'
+services:
+  # serviços docker ouvidoria
+  postgres-ouvidoria:
+    container_name: postgres-ouvidoria
+    image: natarajan/db-ouvidoria
+    build: ./postgres
+    ports:
+     - "5434:5432"
+    expose:
+     - 5434
+    volumes:
+     - postgres-volume-ouvidoria:/var/lib/postgresql/data/
+  web-cliente:
+    container_name: webservice-ouvidoria
+    build: .
+    image: natarajan/ws-ouvidoria
+    ports:
+     - "8080:8080"
+     - "4949:4848"
+    links:
+     - "postgres-ouvidoria:banco-ouvidoria"
+
+
+networks:
+  default:
+    external:
+      name: cliente_default_ntw
+volumes:
+    postgres-volume-ouvidoria:
+      driver: local
+    

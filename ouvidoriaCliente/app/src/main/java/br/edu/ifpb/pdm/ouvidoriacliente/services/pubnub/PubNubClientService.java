@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.ouvidoriacliente.services;
+package br.edu.ifpb.pdm.ouvidoriacliente.services.pubnub;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients.MensagemService;
 
 //import retrofit2.Response;
 
@@ -32,7 +33,7 @@ import br.edu.ifpb.pdm.ouvidoriacliente.R;
 /*
  * IntentService que realiza comunicação com o servidor de mensagens
  */
-public class PubNubService extends IntentService {
+public class PubNubClientService extends IntentService {
 
 
     private static final String PUBNUB_PUBTOKEN = "pub-c-a6e1e709-c24f-4608-ab08-0cacf634bcfd";
@@ -41,7 +42,7 @@ public class PubNubService extends IntentService {
 
 
 
-    public PubNubService() {
+    public PubNubClientService() {
         super("PubnubService");
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setSubscribeKey(PUBNUB_SUBTOKEN);
@@ -57,7 +58,7 @@ public class PubNubService extends IntentService {
      *
      * @param name Used to name the worker thread, important only for debugging.
      */
-    public PubNubService(String name) {
+    public PubNubClientService(String name) {
         super(name);
     }
 

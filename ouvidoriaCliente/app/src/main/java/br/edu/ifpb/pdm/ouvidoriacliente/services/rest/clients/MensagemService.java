@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.ouvidoriacliente.services;
+package br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import br.edu.ifpb.pdm.ouvidoriacliente.entities.Mensagem;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.MensagemDto;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
 import br.edu.ifpb.pdm.ouvidoriacliente.presentations.ResponseActivity;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.retrofit.clients.MensagemRestApiService;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;

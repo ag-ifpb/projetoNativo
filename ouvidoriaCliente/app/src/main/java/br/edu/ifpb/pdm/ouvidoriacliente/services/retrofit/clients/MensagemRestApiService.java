@@ -1,4 +1,4 @@
-package br.edu.ifpb.pdm.ouvidoriacliente.services;
+package br.edu.ifpb.pdm.ouvidoriacliente.services.retrofit.clients;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.ComposedLastMessage;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Mensagem;

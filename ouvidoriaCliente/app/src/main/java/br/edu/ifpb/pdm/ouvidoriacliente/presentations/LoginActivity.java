@@ -5,9 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -31,9 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.PubNubService;
-
-import static android.Manifest.permission.READ_CONTACTS;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.pubnub.PubNubClientService;
 
 /**
  * A login screen that offers login via email/password.
@@ -330,7 +325,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     sharedPreferences.edit().putString("email" , pieces[0]).commit();
                     sharedPreferences.edit().putString("idusuario" , pieces[1]).commit();
 
-                    startService(new Intent(getApplicationContext(), PubNubService.class));
+                    startService(new Intent(getApplicationContext(), PubNubClientService.class));
 
                     return true;
                 }

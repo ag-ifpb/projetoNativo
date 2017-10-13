@@ -29,6 +29,11 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
     private EditText editTextNome;
     private EditText editTextEmail;
 
+
+    private LocalBroadcastManager localBroadcastManager;
+    private BroadcastReceiver savedUserBR;
+    private BroadcastReceiver errorBR;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +69,9 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         });
 
 
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        savedUserBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -76,11 +81,12 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Usuário salvo com sucesso!", Toast.LENGTH_LONG).show();
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.SAVEDUSER"));
+        };
+
 
 
         //mensagem de erro
-        localBroadcastManager.registerReceiver(new BroadcastReceiver() {
+        errorBR = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -89,7 +95,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 
             }
-        }, new IntentFilter("br.edu.ifpb.ouvidoriaadm.ERRO"));
+        };
 
     }
 
@@ -106,5 +112,19 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         startService(getUsersIntent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        localBroadcastManager.registerReceiver(savedUserBR, new IntentFilter("br.edu.ifpb.ouvidoriaadm.SAVEDUSER"));
+        localBroadcastManager.registerReceiver(errorBR, new IntentFilter("br.edu.ifpb.ouvidoriaadm.ERRO"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        localBroadcastManager.unregisterReceiver(savedUserBR);
+        localBroadcastManager.unregisterReceiver(errorBR);
+    }
 }

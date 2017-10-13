@@ -9,15 +9,14 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
 import br.edu.ifpb.pdm.ouvidoriacliente.enums.StatusTicket;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.MensagemService;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.TicketService;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients.MensagemService;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients.TicketService;
 
 
 /**
@@ -28,6 +27,10 @@ public class OpenTicketArrayAdapter extends BaseAdapter implements ListAdapter {
 
     private ArrayList<Ticket> list = new ArrayList<>();
     private Context context;
+
+    private Button btnCancel;
+    private Button btnResponse;
+
 
     public OpenTicketArrayAdapter(ArrayList<Ticket> list, Context context) {
         this.list = list;
@@ -64,45 +67,70 @@ public class OpenTicketArrayAdapter extends BaseAdapter implements ListAdapter {
         listItemText.setText(list.get(position).toString());
 
         //Handle buttons and add onClickListeners
-        Button btnAction = (Button)view.findViewById(R.id.btnResponse);
+        btnResponse = (Button)view.findViewById(R.id.btnResponse);
+        btnCancel = (Button)view.findViewById(R.id.btnCancel);
 
         final StatusTicket status = StatusTicket.valueOf(getItem(position).getStatus());
-        if (status.equals(StatusTicket.OPEN)) {
-            btnAction.setText("Cancelar");
 
-            btnAction.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
+        btnCancel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
 
-                    Intent intent = new Intent(context, TicketService.class);
-                    intent.putExtra("command", "CANCEL");
-                    intent.putExtra("id", getItem(itemPosition).getId());
-                    intent.putExtra("position", itemPosition);
+                Intent intent = new Intent(context, TicketService.class);
+                intent.putExtra("command", "CANCEL");
+                intent.putExtra("id", getItem(itemPosition).getId());
+                intent.putExtra("position", itemPosition);
 
-                    context.startService(intent);
-
-                }
-            });
+                context.startService(intent);
 
 
+
+            }
+        });
+
+        btnResponse.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, MensagemService.class);
+                intent.putExtra("command", "GETLAST");
+                intent.putExtra("ticket", getItem(itemPosition));
+                intent.putExtra("position", itemPosition);
+
+                context.startService(intent);
+            }
+        });
+
+
+        if (status.equals(StatusTicket.REPLICATED)) {
+            btnResponse.setText("Responder");
         } else {
-            btnAction.setText("Responder");
-
-            btnAction.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-
-
-                    Intent intent = new Intent(context, MensagemService.class);
-                    intent.putExtra("command", "GETLAST");
-                    intent.putExtra("ticket", getItem(itemPosition));
-                    intent.putExtra("position", itemPosition);
-
-                    context.startService(intent);
-
-                }
-            });
+            btnResponse.setText("Ver");
         }
+
+//        if (status.equals(StatusTicket.OPEN)) {
+//
+//            btnResponse.setEnabled(true);
+//            btnResponse.setOnClickListener(new View.OnClickListener(){
+//                @Override
+//                public void onClick(View v) {
+//
+//                    Intent intent = new Intent(context, MensagemService.class);
+//                    intent.putExtra("command", "GETLAST");
+//                    intent.putExtra("ticket", getItem(itemPosition));
+//                    intent.putExtra("position", itemPosition);
+//
+//                    context.startService(intent);
+//                }
+//            });
+//
+//
+//        } else {
+//
+//            btnResponse.setEnabled(false);
+//
+//
+//        }
 
 
 

@@ -11,7 +11,8 @@ import android.widget.TextView;
 import br.edu.ifpb.pdm.ouvidoriacliente.R;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Mensagem;
 import br.edu.ifpb.pdm.ouvidoriacliente.entities.Ticket;
-import br.edu.ifpb.pdm.ouvidoriacliente.services.MensagemService;
+import br.edu.ifpb.pdm.ouvidoriacliente.enums.StatusTicket;
+import br.edu.ifpb.pdm.ouvidoriacliente.services.rest.clients.MensagemService;
 
 public class ResponseActivity extends AppCompatActivity {
 
@@ -26,6 +27,8 @@ public class ResponseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_response);
+
+        msgText = (EditText) findViewById(R.id.editTextMsgText);
 
         mensagem = (Mensagem) getIntent().getSerializableExtra("mensagem");
         ticket = (Ticket) getIntent().getSerializableExtra("ticket");
@@ -42,21 +45,31 @@ public class ResponseActivity extends AppCompatActivity {
 
         sendButton = (Button) findViewById(R.id.buttonSend);
 
-        sendButton.setOnClickListener(new Button.OnClickListener(){
+        final StatusTicket statusTicket = StatusTicket.valueOf(ticket.getStatus());
 
-            @Override
-            public void onClick(View v) {
+        if (statusTicket == StatusTicket.REPLICATED) {
+            msgText.setEnabled(true);
+            sendButton.setEnabled(true);
+            sendButton.setOnClickListener(new Button.OnClickListener(){
 
-                sendMessage();
+                @Override
+                public void onClick(View v) {
+                    sendMessage();
+                }
+            });
 
-            }
-        });
+        } else {
+            msgText.setEnabled(false);
+            sendButton.setEnabled(false);
+        }
+
+
 
     }
 
     private void sendMessage() {
 
-        final String msg = ((EditText) findViewById(R.id.editTextMsgText)).getText().toString();
+        final String msg = msgText.getText().toString();
 
         Intent intent = new Intent(this, MensagemService.class);
         intent.putExtra("command", "MSGCLIENT");

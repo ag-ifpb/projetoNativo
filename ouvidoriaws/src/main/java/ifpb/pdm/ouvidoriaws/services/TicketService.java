@@ -79,18 +79,19 @@ public class TicketService {
         return ticketDao.getAllByUser(userId);
     }
     
+
     /*
-    
+        O cliente pode cancelar a qualquer momento
     */
     public void cancelByCliente(Long id) throws TicketException {
         Ticket ticket = getById(id);
-        if (ticket.getStatus() == StatusTicket.OPEN) {
+//        if (ticket.getStatus() == StatusTicket.OPEN) {
             ticket.setUpdatedIn(LocalDateTime.now());
             ticket.setStatus(StatusTicket.CLOSED);
             ticketDao.atualizar(ticket);
-        } else {
-            throw new TicketException("Ticket não está aberto");
-        }
+//        } else {
+//            throw new TicketException("Ticket não está aberto");
+//        }
     }
     
     /*
